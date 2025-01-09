@@ -28,10 +28,19 @@ class AuthenticationApiRepository {
 	 * @param payload
 	 * @returns
 	 */
-	uploadDocument(payload: File) {
-		return this.httpReq.post<any>(`/auth/upload-document`, {
-			document: payload,
-		});
+	uploadDocument(document: File, email: string) {
+		return this.httpReq.patch<any>(
+			`/auth/upload-document`,
+			{
+				document,
+				email,
+			},
+			{
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			}
+		);
 	}
 }
 

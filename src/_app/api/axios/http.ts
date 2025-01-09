@@ -16,7 +16,8 @@ httpReq.interceptors.request.use(
 			...config,
 			headers: {
 				...config.headers,
-				Authorization: userInfo?.token ? `Bearer ${userInfo?.token}` : '',
+				// Authorization: userInfo?.token ? `Bearer ${userInfo?.token}` : '',
+				Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3N2ZlMWVhMDk2N2FjNDg4MzcyOWNjYiIsImVtYWlsIjoicmFmaXoubWVoZWRpQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzM2NDM0MTU0LCJleHAiOjE3MzY2OTMzNTR9.egndHvWcJm8NoUKgImHMWcX99L0W4ErgCZFG5RHZfnQ`,
 			},
 		};
 	},

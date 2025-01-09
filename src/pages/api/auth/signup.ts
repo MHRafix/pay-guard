@@ -23,7 +23,7 @@ export default async function handler(
 		}
 
 		// signup with supabase
-		const { data, error } = await supabase.auth.signUp({
+		const { error } = await supabase.auth.signUp({
 			email,
 			password,
 			options: {
@@ -40,6 +40,7 @@ export default async function handler(
 
 		// find exisiting user
 		const existingUser = await User.findOne({ email });
+
 		if (existingUser) {
 			return res.status(400).json({ message: 'User already exists.' });
 		}

@@ -12,7 +12,10 @@ const MyProfilePage: NextPage = () => {
 	const { mutate, isPending } = useMutation({
 		mutationKey: ['Upload_Document_Mutation'],
 		mutationFn: (payload: File) =>
-			authenticationApiRepository.uploadDocument(payload),
+			authenticationApiRepository.uploadDocument(
+				payload,
+				'rafiz.mehedi@gmail.com'
+			),
 		onSuccess(res) {
 			showNotification({
 				title: 'Document uploaded successfully.',
