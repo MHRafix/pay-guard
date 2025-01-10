@@ -17,7 +17,7 @@ export default async function handler(
 			// find document
 			const isExistDocument = await FileDocument.findOne({ userId });
 
-			// throw err
+			// update document
 			if (isExistDocument) {
 				await FileDocument.updateOne(
 					{ userId },
@@ -45,10 +45,27 @@ export default async function handler(
 		}
 	} else if (req.method === 'GET') {
 		try {
-			const documents = await FileDocument.find().populate(
-				'userId',
-				'name email'
-			);
+			// find documents
+			const documents = await FileDocument.aggregate([
+				{
+					$lookup: {
+						from: 'users', // name of the collection
+						localField: 'userId', // field in document
+						foreignField: '_id', // field in User
+						as: 'userId', // output array field
+					},
+				},
+				{ $unwind: '$userId' }, // flatten the array if each document has one author
+				{
+					$project: {
+						_id: 1, // include the _id from FileDocument
+						document: 1, // include document fields
+						status: 1, // include status fields
+						'userId.name': 1, // include specific fields from the joined collection
+						'userId.email': 1, // include specific fields from the joined collection
+					},
+				},
+			]);
 
 			// throw not found err
 			if (!documents.length) {

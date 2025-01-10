@@ -27,7 +27,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/pages/api/auth/hello.ts"
+    "src/pages/api/auth/hello.ts",
+    "src/db/schema/Payment.schemats"
   ],
   "exclude": [
     "node_modules"
