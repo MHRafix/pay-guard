@@ -1,5 +1,5 @@
 import { connectToDatabase } from '@/db/db-connection';
-import User from '@/db/schema/User';
+import User from '@/db/schema/User.schema';
 import { supabase } from '@/lib/supabaseClient';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';

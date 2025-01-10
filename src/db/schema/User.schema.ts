@@ -13,7 +13,6 @@ const userSchema: Schema = new mongoose.Schema(
 		email: { type: String, required: true, unique: true },
 		password: { type: String, required: true },
 		role: { type: String, required: false, default: 'USER' },
-		identityDocument: { type: String, required: false },
 	},
 	{ timestamps: true }
 );

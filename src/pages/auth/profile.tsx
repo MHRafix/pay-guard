@@ -14,9 +14,9 @@ const MyProfilePage: NextPage = () => {
 		mutationFn: (payload: File) =>
 			authenticationApiRepository.uploadDocument(
 				payload,
-				'rafiz.mehedi@gmail.com'
+				'6781573ecaaf3a8a232f3141'
 			),
-		onSuccess(res:AxiosResponse) {
+		onSuccess(res: AxiosResponse) {
 			showNotification({
 				title: 'Document uploaded successfully.',
 				color: 'teal',
@@ -35,7 +35,7 @@ const MyProfilePage: NextPage = () => {
 			});
 		},
 	});
-console.log(data)
+	console.log(data);
 	// handle upload document
 	const handleUploadDocument = async (payload: File) => {
 		mutate(payload);
@@ -43,19 +43,21 @@ console.log(data)
 
 	return (
 		<div className='h-screen flex justify-center items-center'>
-			<img src={data?.data?.data?.url} alt="" />
+			<img src={data?.data?.data?.url} alt='' />
 			<Dropzone
 				onDrop={(files) => handleUploadDocument(files[0])}
-				onReject={() => showNotification({
-					title: "File is bigger than 5 mb",
-					message: "File should be smaller than 5 mb",
-					color: "yellow",
-					icon: <IconInfoCircle />
-				})}
+				onReject={() =>
+					showNotification({
+						title: 'File is bigger than 5 mb',
+						message: 'File should be smaller than 5 mb',
+						color: 'yellow',
+						icon: <IconInfoCircle />,
+					})
+				}
 				maxSize={4 * 1024 ** 2}
 				accept={IMAGE_MIME_TYPE}
-				multiple={false} 
-			  loading={isPending}
+				multiple={false}
+				loading={isPending}
 			>
 				<div>
 					<Text size='xl' inline>

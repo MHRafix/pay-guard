@@ -1,5 +1,5 @@
 import { connectToDatabase } from '@/db/db-connection';
-import User from '@/db/schema/User';
+import User from '@/db/schema/User.schema';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -9,25 +9,22 @@ export default async function handler(
 	// db connect
 	await connectToDatabase();
 
-	// user get logic
+	// signin logic
 	if (req.method === 'GET') {
 		try {
-
 			// find users
 			const users = await User.find({});
+			// await User.deleteOne({ _id: '677fe1ea0967ac4883729ccb' });
 
-			// console.log(url);
-			if (!users.length) {
-				return res.status(400).json({ message: 'No users found.' });
-			}
-
-			return res.status(200).json({
-				message: 'All users list get successfully.',
+			// success response
+			res.status(200).json({
+				message: 'Users list get successful.',
 				data: users,
 			});
 		} catch (err) {
+			// error response
 			res.status(500).json({
-				message: 'Failed to get users list',
+				message: 'Failed to get users list.',
 			});
 		}
 	} else {

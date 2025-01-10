@@ -29,14 +29,14 @@ class AuthenticationApiRepository {
 	 * @param payload
 	 * @returns
 	 */
-	async uploadDocument(document: File, email: string) {
+	async uploadDocument(document: File, userId: string) {
 		// upload document
 		const url = await uploadDocument(document);
-			return this.httpReq.patch<any>(
-				`/auth/upload-document`,
-				{url, email},
-			);
-		}
+		return this.httpReq.post<any>(`/identity-verification/documents`, {
+			url,
+			userId,
+		});
+	}
 }
 
 const authenticationApiRepository = new AuthenticationApiRepository(httpReq);
