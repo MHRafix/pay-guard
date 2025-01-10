@@ -2,21 +2,21 @@ import authenticationApiRepository from '@/_app/api/authentication.api';
 import { Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { showNotification } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconInfoCircle, IconX } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { NextPage } from 'next';
 
 const MyProfilePage: NextPage = () => {
 	// upload document mutation
-	const { mutate, isPending } = useMutation({
+	const { mutate, isPending, data } = useMutation({
 		mutationKey: ['Upload_Document_Mutation'],
 		mutationFn: (payload: File) =>
 			authenticationApiRepository.uploadDocument(
 				payload,
 				'rafiz.mehedi@gmail.com'
 			),
-		onSuccess(res) {
+		onSuccess(res:AxiosResponse) {
 			showNotification({
 				title: 'Document uploaded successfully.',
 				color: 'teal',
@@ -35,21 +35,27 @@ const MyProfilePage: NextPage = () => {
 			});
 		},
 	});
-
+console.log(data)
 	// handle upload document
 	const handleUploadDocument = async (payload: File) => {
-		console.log(payload);
 		mutate(payload);
 	};
 
 	return (
 		<div className='h-screen flex justify-center items-center'>
+			<img src={data?.data?.data?.url} alt="" />
 			<Dropzone
 				onDrop={(files) => handleUploadDocument(files[0])}
-				onReject={(files) => console.log('rejected files', files)}
-				maxSize={3 * 1024 ** 2}
+				onReject={() => showNotification({
+					title: "File is bigger than 5 mb",
+					message: "File should be smaller than 5 mb",
+					color: "yellow",
+					icon: <IconInfoCircle />
+				})}
+				maxSize={4 * 1024 ** 2}
 				accept={IMAGE_MIME_TYPE}
-				multiple={false}
+				multiple={false} 
+			  loading={isPending}
 			>
 				<div>
 					<Text size='xl' inline>

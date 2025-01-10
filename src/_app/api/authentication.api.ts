@@ -1,3 +1,4 @@
+import { uploadDocument } from '@/lib/cloudinary/uploadDocument';
 import { ISigninPayload, ISignupPayload } from '@/pages/auth/signin';
 import { AxiosInstance } from 'axios';
 import httpReq from './axios/http';
@@ -28,20 +29,14 @@ class AuthenticationApiRepository {
 	 * @param payload
 	 * @returns
 	 */
-	uploadDocument(document: File, email: string) {
-		return this.httpReq.patch<any>(
-			`/auth/upload-document`,
-			{
-				document,
-				email,
-			},
-			{
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-			}
-		);
-	}
+	async uploadDocument(document: File, email: string) {
+		// upload document
+		const url = await uploadDocument(document);
+			return this.httpReq.patch<any>(
+				`/auth/upload-document`,
+				{url, email},
+			);
+		}
 }
 
 const authenticationApiRepository = new AuthenticationApiRepository(httpReq);

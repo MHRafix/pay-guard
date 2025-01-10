@@ -21,7 +21,6 @@ export async function connectToDatabase() {
 		cached.promise = mongoose
 			.connect(MONGODB_URI, {
 				useNewUrlParser: true,
-				useUnifiedTopology: true,
 			} as mongoose.ConnectOptions)
 			.then((mongoose) => mongoose);
 	}
