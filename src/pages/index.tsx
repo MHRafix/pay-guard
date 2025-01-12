@@ -20,7 +20,7 @@ const DashboardPage: NextPage = () => {
 	const [filterDate, setFilterDate] = useState<Date>();
 
 	// payments fetching
-	const { data, isPending, refetch, isRefetching } = useQuery({
+	const { data, isPending, refetch } = useQuery({
 		queryKey: ['all-payments-fetched'],
 		queryFn: () =>
 			paymentApiRepository.getTotalPaymentsByStatus(status!, filterDate),
@@ -48,6 +48,7 @@ const DashboardPage: NextPage = () => {
 					label={'Filter by date'}
 					value={filterDate}
 					onChange={(e) => setFilterDate(e!)}
+					placeholder='Pick a date'
 				/>
 			</Flex>
 
