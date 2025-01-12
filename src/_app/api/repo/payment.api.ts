@@ -24,6 +24,17 @@ class PaymentApiRepository {
 	}
 
 	/**
+	 * payments get api
+	 * @returns
+	 */
+	async getTotalPaymentsByStatus(status?: string, filterDate?: Date) {
+		return this.httpReq.post<{ data: { totalPayment: number } }>(`/dashboard`, {
+			status,
+			filterDate,
+		});
+	}
+
+	/**
 	 * update payments api
 	 * @param _id string
 	 * @param status string
