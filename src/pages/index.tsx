@@ -49,6 +49,7 @@ const DashboardPage: NextPage = () => {
 					value={filterDate}
 					onChange={(e) => setFilterDate(e!)}
 					placeholder='Pick a date'
+					size='md'
 				/>
 			</Flex>
 
