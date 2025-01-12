@@ -1,21 +1,24 @@
 import authenticationApiRepository from '@/_app/api/repo/authentication.api';
-import { Text } from '@mantine/core';
+import { useGetSession } from '@/_app/hooks/useGetSession';
+import { Anchor, Space, Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { showNotification } from '@mantine/notifications';
-import { IconCheck, IconInfoCircle, IconX } from '@tabler/icons-react';
+import {
+	IconCheck,
+	IconFile,
+	IconInfoCircle,
+	IconX,
+} from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError, AxiosResponse } from 'axios';
-import { NextPage } from 'next';
 
-const MyProfilePage: NextPage = () => {
+const VerifyIdentityForm = () => {
+	const { user } = useGetSession();
 	// upload document mutation
 	const { mutate, isPending, data } = useMutation({
 		mutationKey: ['Upload_Document_Mutation'],
 		mutationFn: (payload: File) =>
-			authenticationApiRepository.uploadDocument(
-				payload,
-				'6781573ecaaf3a8a232f3141'
-			),
+			authenticationApiRepository.uploadDocument(payload, user?._id!),
 		onSuccess(res: AxiosResponse) {
 			showNotification({
 				title: 'Document uploaded successfully.',
@@ -35,15 +38,24 @@ const MyProfilePage: NextPage = () => {
 			});
 		},
 	});
-	console.log(data);
+
 	// handle upload document
 	const handleUploadDocument = async (payload: File) => {
 		mutate(payload);
 	};
-
 	return (
-		<div className='h-screen flex justify-center items-center'>
-			<img src={data?.data?.data?.url} alt='' />
+		<div>
+			{' '}
+			{data?.data?.data?.url && (
+				<div className='flex gap-3 bg-slate-400 rounded-md'>
+					<IconFile /> &nbsp;&nbsp;{' '}
+					<Anchor target='_blank' href={data?.data?.data?.url}>
+						{data?.data?.data?.url}
+					</Anchor>
+				</div>
+			)}
+			<Space h={'md'} />
+			<h3>Upload your NID or Birth certificate for verification</h3>{' '}
 			<Dropzone
 				onDrop={(files) => handleUploadDocument(files[0])}
 				onReject={() =>
@@ -57,14 +69,16 @@ const MyProfilePage: NextPage = () => {
 				maxSize={4 * 1024 ** 2}
 				accept={IMAGE_MIME_TYPE}
 				multiple={false}
+				h={220}
+				className='flex items-center justify-center'
 				loading={isPending}
 			>
 				<div>
 					<Text size='xl' inline>
-						Drag images here or click to select files
+						Upload NID / Birth Certificate
 					</Text>
 					<Text size='sm' color='dimmed' inline mt={7}>
-						Attach as many files as you like, each file should not exceed 5mb
+						Your file should not exceed 5mb
 					</Text>
 				</div>
 			</Dropzone>
@@ -72,4 +86,4 @@ const MyProfilePage: NextPage = () => {
 	);
 };
 
-export default MyProfilePage;
+export default VerifyIdentityForm;

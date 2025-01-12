@@ -11,7 +11,7 @@ import { showNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { MRT_ColumnDef } from 'mantine-react-table';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 const PaymentPage: React.FC = () => {
 	const { user } = useGetSession();
@@ -19,7 +19,12 @@ const PaymentPage: React.FC = () => {
 	const { data, isPending, refetch, isRefetching } = useQuery({
 		queryKey: ['all-payments-fetched'],
 		queryFn: () => paymentApiRepository.getPayments(),
+		enabled: false,
 	});
+
+	useEffect(() => {
+		refetch();
+	}, []);
 
 	// payments update mutation
 	const { mutate: reviewPayment, isPending: __reviewing } = useMutation({
@@ -44,12 +49,12 @@ const PaymentPage: React.FC = () => {
 				message: '',
 			});
 		},
-		onError: () => {
+		onError: (err) => {
 			showNotification({
 				title: 'Payment reviewed failed.',
 				color: 'red',
 				icon: <IconX />,
-				message: '',
+				message: err.message,
 			});
 		},
 	});
@@ -90,11 +95,12 @@ const PaymentPage: React.FC = () => {
 										// @ts-ignore
 										_id: payment?._id,
 										email: payment?.userId?.email,
-										name: payment?.userId?.email,
+										name: payment?.userId?.name,
 										status: 'PENDING',
 									})
 								}
 								color={getStatusBadgeColor('PENDING')}
+								disabled={payment?.status === 'PENDING'}
 							>
 								PENDING
 							</Menu.Item>
@@ -104,11 +110,12 @@ const PaymentPage: React.FC = () => {
 										// @ts-ignore
 										_id: payment?._id,
 										email: payment?.userId?.email,
-										name: payment?.userId?.email,
+										name: payment?.userId?.name,
 										status: 'APPROVED',
 									})
 								}
 								color={getStatusBadgeColor('APPROVED')}
+								disabled={payment?.status === 'APPROVED'}
 							>
 								APPROVED
 							</Menu.Item>
@@ -118,11 +125,12 @@ const PaymentPage: React.FC = () => {
 										// @ts-ignore
 										_id: payment?._id,
 										email: payment?.userId?.email,
-										name: payment?.userId?.email,
+										name: payment?.userId?.name,
 										status: 'REJECTED',
 									})
 								}
 								color={getStatusBadgeColor('REJECTED')}
+								disabled={payment?.status === 'REJECTED'}
 							>
 								REJECTED
 							</Menu.Item>

@@ -75,7 +75,7 @@ const DashboardHeader: React.FC<Props> = ({ opened, setOpened }) => {
 								icon={<IconLogout />}
 								onClick={() =>
 									openConfirmModal({
-										title: 'are you sure to log out?',
+										title: 'Are you sure to log out?',
 										children: (
 											<Text>Proceed yes button to perform the action.</Text>
 										),

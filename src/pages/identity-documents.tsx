@@ -1,6 +1,8 @@
 import documentApiRepository from '@/_app/api/repo/document.api';
 import { IDocument } from '@/_app/api/type-model/documents.model';
+import VerifyIdentityForm from '@/_app/components/identity-verify/VerifyIdentityForm';
 import DashboardLayout from '@/_app/components/layout/DashboardLayout';
+import { useGetSession } from '@/_app/hooks/useGetSession';
 import ProtectWithSession from '@/_app/protectors/ProtectWithSession';
 import DataTable from '@/lib/mantine-react-table/DataTable';
 import { getStatusBadgeColor } from '@/utils/getStatusBadgeColor';
@@ -10,14 +12,21 @@ import { IconCheck, IconFile, IconX } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { MRT_ColumnDef } from 'mantine-react-table';
 import { NextPage } from 'next';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 const IdentityDocumentsPage: NextPage = () => {
+	const { user } = useGetSession();
+
 	// documents fetching
 	const { data, isPending, refetch, isRefetching } = useQuery({
 		queryKey: ['all-documents'],
 		queryFn: () => documentApiRepository.getDocuments(),
+		enabled: false,
 	});
+
+	useEffect(() => {
+		refetch();
+	}, []);
 
 	// document update mutation
 	const { mutate: verifyDocument, isPending: __verifying } = useMutation({
@@ -33,12 +42,12 @@ const IdentityDocumentsPage: NextPage = () => {
 				message: '',
 			});
 		},
-		onError: () => {
+		onError: (err) => {
 			showNotification({
-				title: 'Document verified failed.',
+				title: 'Document verification failed.',
 				color: 'red',
 				icon: <IconX />,
-				message: '',
+				message: err?.message,
 			});
 		},
 	});
@@ -82,6 +91,7 @@ const IdentityDocumentsPage: NextPage = () => {
 									verifyDocument({ _id: document?._id, status: 'PENDING' })
 								}
 								color={getStatusBadgeColor('PENDING')}
+								disabled={document?.status === 'PENDING'}
 							>
 								PENDING
 							</Menu.Item>
@@ -90,6 +100,7 @@ const IdentityDocumentsPage: NextPage = () => {
 									verifyDocument({ _id: document?._id, status: 'APPROVED' })
 								}
 								color={getStatusBadgeColor('APPROVED')}
+								disabled={document?.status === 'APPROVED'}
 							>
 								APPROVED
 							</Menu.Item>
@@ -98,6 +109,7 @@ const IdentityDocumentsPage: NextPage = () => {
 									verifyDocument({ _id: document?._id, status: 'REJECTED' })
 								}
 								color={getStatusBadgeColor('REJECTED')}
+								disabled={document?.status === 'REJECTED'}
 							>
 								REJECTED
 							</Menu.Item>
@@ -112,13 +124,17 @@ const IdentityDocumentsPage: NextPage = () => {
 
 	return (
 		<DashboardLayout title='All Identity Documents'>
-			<DataTable
-				tableTitle='Users identity documents'
-				columns={columns}
-				data={data?.data?.data ?? []}
-				refetch={refetch}
-				loading={isPending || isRefetching || __verifying}
-			/>
+			{user?.role === 'ADMIN' ? (
+				<DataTable
+					tableTitle='Users identity documents'
+					columns={columns}
+					data={data?.data?.data ?? []}
+					refetch={refetch}
+					loading={isPending || isRefetching || __verifying}
+				/>
+			) : (
+				<VerifyIdentityForm />
+			)}
 		</DashboardLayout>
 	);
 };

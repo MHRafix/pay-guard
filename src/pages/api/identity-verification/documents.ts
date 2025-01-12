@@ -1,5 +1,6 @@
 import { connectToDatabase } from '@/db/db-connection';
 import FileDocument from '@/db/schema/Document.schema';
+import { checkRole, verifyToken } from '@/utils/jwt/RoleGuard';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -9,8 +10,26 @@ export default async function handler(
 	// db connect
 	await connectToDatabase();
 
+	const token = req.headers?.authorization?.split('Bearer ')[1];
+	const user = verifyToken(token!);
+
+	// throw err
+	if (!user) {
+		return res.status(401).json({
+			message: 'Unauthorized',
+		});
+	}
+
 	// upload document logic
 	if (req.method === 'POST') {
+		// check has access
+		const hasAccess = checkRole(token!, ['USER']);
+
+		if (!hasAccess) {
+			return res.status(401).json({
+				message: 'Unauthorized',
+			});
+		}
 		try {
 			const { userId, url } = req.body;
 
@@ -28,6 +47,7 @@ export default async function handler(
 				return res.status(200).json({
 					message: 'Document updated successfully.',
 					isSuccess: true,
+					data: { url },
 				});
 			}
 
@@ -44,6 +64,14 @@ export default async function handler(
 			});
 		}
 	} else if (req.method === 'GET') {
+		// check has access
+		const hasAccess = checkRole(token!, ['ADMIN']);
+
+		if (!hasAccess) {
+			return res.status(401).json({
+				message: 'Unauthorized',
+			});
+		}
 		try {
 			// find documents
 			const documents = await FileDocument.aggregate([
@@ -82,6 +110,14 @@ export default async function handler(
 			});
 		}
 	} else if (req.method === 'PATCH') {
+		// check has access
+		const hasAccess = checkRole(token!, ['ADMIN']);
+
+		if (!hasAccess) {
+			return res.status(401).json({
+				message: 'Unauthorized',
+			});
+		}
 		try {
 			const { _id, status } = req.body;
 

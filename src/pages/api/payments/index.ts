@@ -1,5 +1,6 @@
 import { connectToDatabase } from '@/db/db-connection';
 import Payment from '@/db/schema/Payment.schema';
+import { checkRole, verifyToken } from '@/utils/jwt/RoleGuard';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
@@ -12,8 +13,26 @@ export default async function handler(
 	// db connect
 	await connectToDatabase();
 
+	const token = req.headers?.authorization?.split('Bearer ')[1];
+	const user = verifyToken(token!);
+
+	// throw err
+	if (!user) {
+		return res.status(401).json({
+			message: 'Unauthorized',
+		});
+	}
+
 	// payment logic
 	if (req.method === 'POST') {
+		// check has access
+		const hasAccess = checkRole(token!, ['USER']);
+
+		if (!hasAccess) {
+			return res.status(401).json({
+				message: 'Unauthorized',
+			});
+		}
 		const payload = req.body;
 
 		// create a payment intent
@@ -38,6 +57,14 @@ export default async function handler(
 			data: { payment, paymentClientSecret: paymentIntent.client_secret },
 		});
 	} else if (req.method === 'GET') {
+		// check has access
+		const hasAccess = checkRole(token!, ['ADMIN']);
+
+		if (!hasAccess) {
+			return res.status(401).json({
+				message: 'Unauthorized',
+			});
+		}
 		try {
 			// find payments
 			const payments = await Payment.aggregate([

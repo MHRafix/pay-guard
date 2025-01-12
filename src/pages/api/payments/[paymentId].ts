@@ -2,6 +2,7 @@ import { connectToDatabase } from '@/db/db-connection';
 import Payment from '@/db/schema/Payment.schema';
 import { getMailBody } from '@/lib/mail-service/getMailBody';
 import { sendMail } from '@/lib/mail-service/mail-sender';
+import { checkRole, verifyToken } from '@/utils/jwt/RoleGuard';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
@@ -16,6 +17,24 @@ export default async function handler(
 
 	// payment update
 	if (req.method === 'PATCH') {
+		const token = req.headers?.authorization?.split('Bearer ')[1];
+		const user = verifyToken(token!);
+
+		// throw err
+		if (!user) {
+			return res.status(401).json({
+				message: 'Unauthorized',
+			});
+		}
+
+		// check has access
+		const hasAccess = checkRole(token!, ['ADMIN']);
+
+		if (!hasAccess) {
+			return res.status(401).json({
+				message: 'Unauthorized',
+			});
+		}
 		try {
 			const { paymentId: _id } = req.query;
 			const { email, name, status } = req.body;
