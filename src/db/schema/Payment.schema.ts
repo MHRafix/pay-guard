@@ -1,12 +1,11 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
-import User from './User.schema';
+import User, { IUser } from './User.schema';
 
 export interface IPayment extends Document {
 	title: string;
-	// cardNo: string;
 	amount: number;
 	status: 'PENDING' | 'APPROVED' | 'REJECTED';
-	userId: string;
+	userId: IUser;
 }
 
 const paymentSchema: Schema = new mongoose.Schema(

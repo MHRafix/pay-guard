@@ -13,7 +13,7 @@ export async function sendMail(sendTo: string, __htmlPayload: string) {
 	const mailOptions = {
 		from: process.env.EMAIL_USER,
 		to: sendTo,
-		subject: 'Reply from Asia Tours',
+		subject: 'Reply from PayGuard',
 		html: __htmlPayload,
 	};
 

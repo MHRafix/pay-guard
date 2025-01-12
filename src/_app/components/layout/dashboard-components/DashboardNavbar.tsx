@@ -7,7 +7,12 @@ import {
 	Text,
 } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { IconTransactionDollar, IconX } from '@tabler/icons-react';
+import {
+	IconDashboard,
+	IconTransactionDollar,
+	IconUser,
+	IconX,
+} from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -31,17 +36,21 @@ const DashboardNavbar: React.FC<Props> = ({ opened, onOpened }) => {
 			hidden={!opened}
 			width={{ sm: 200, lg: 250 }}
 			style={{ zIndex: 100000000 }}
-			className={`${mode === 'light' ? '!bg-[#FFFFFF]' : '!bg-slate-800'}`}
+			className={`${
+				mode === 'light'
+					? '!bg-[#FFFFFF] !border-r-slate-300'
+					: '!bg-slate-800 !border-r-slate-600'
+			} !border-r-solid`}
 		>
 			<Navbar.Section>
 				<Space h={10} />
-				<div className='text-center mt-5'>
+				<div className='text-left'>
 					<Image
 						src={'/assets/Logo/logo.png'}
 						alt='Logo'
 						width={200}
 						height={200}
-						className='!w-[200px] mx-auto !object-cover'
+						className='!w-[200px] !object-cover'
 					/>
 				</div>
 			</Navbar.Section>
@@ -104,6 +113,17 @@ const DashboardNavbar: React.FC<Props> = ({ opened, onOpened }) => {
 export default DashboardNavbar;
 
 export const menus = [
+	{
+		label: 'Dashboard',
+		icon: <IconDashboard size={20} />,
+		href: '/',
+	},
+	{
+		label: 'Verify Identity',
+		icon: <IconUser size={20} />,
+		href: '/identity-documents',
+	},
+
 	{
 		label: 'Payments',
 		icon: <IconTransactionDollar size={20} />,

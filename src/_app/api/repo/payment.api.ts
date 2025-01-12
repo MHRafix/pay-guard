@@ -1,5 +1,6 @@
 import { AxiosInstance } from 'axios';
 import httpReq from '../axios-config/http';
+import { IPaymentApiResponse } from '../type-model/payment.model';
 
 class PaymentApiRepository {
 	constructor(private httpReq: AxiosInstance) {}
@@ -19,7 +20,7 @@ class PaymentApiRepository {
 	 * @returns
 	 */
 	async getPayments() {
-		return this.httpReq.get<any>(`/payments`);
+		return this.httpReq.get<IPaymentApiResponse>(`/payments`);
 	}
 
 	/**
@@ -28,9 +29,16 @@ class PaymentApiRepository {
 	 * @param status string
 	 * @returns
 	 */
-	async updatePayments(_id: string, status: string) {
+	async updatePayments(
+		_id: string,
+		name: string,
+		email?: string,
+		status?: string
+	) {
 		return this.httpReq.patch<any>(`/payments/${_id}`, {
 			status,
+			name,
+			email,
 		});
 	}
 }

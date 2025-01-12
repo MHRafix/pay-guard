@@ -24,7 +24,7 @@ const DashboardLayout: React.FC<PropsWithChildren<Props>> = ({
 	return (
 		<div>
 			<Head>
-				<title>BookNest - {title ? title : 'Dashboard'}</title>
+				<title>PayGuard - {title ? title : 'Dashboard'}</title>
 				<meta
 					name='viewport'
 					content='minimum-scale=1, initial-scale=1, width=device-width'

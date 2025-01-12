@@ -45,6 +45,7 @@ const PaymentForm: React.FC = () => {
 		handleSubmit,
 		register,
 		setValue,
+		reset,
 		formState: { errors },
 	} = useForm({
 		resolver: yupResolver(Payment_Form_Validation_Schema),
@@ -99,6 +100,7 @@ const PaymentForm: React.FC = () => {
 		mutationKey: ['Payment_Mutation'],
 		mutationFn: (payload: any) => paymentApiRepository.payPayment(payload),
 		onSuccess(res) {
+			reset({});
 			handleStripeSubmit(res?.data?.paymentClientSecret);
 		},
 		onError(error: AxiosError) {

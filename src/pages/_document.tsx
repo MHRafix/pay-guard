@@ -1,4 +1,4 @@
-import { bookNestApplicationEmotionCache as payGuardApplicationEmotionCache } from '@/utils/emotionCache';
+import { payGuardApplicationEmotionCache } from '@/utils/emotionCache';
 import { ServerStyles, createStylesServer } from '@mantine/next';
 import Document, { DocumentContext } from 'next/document';
 

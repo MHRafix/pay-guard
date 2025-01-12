@@ -1,6 +1,7 @@
 import { uploadDocument } from '@/lib/cloudinary/uploadDocument';
 import { AxiosInstance } from 'axios';
 import httpReq from '../axios-config/http';
+import { IDocumentsApiResponse } from '../type-model/documents.model';
 
 class DocumentApiRepository {
 	constructor(private httpReq: AxiosInstance) {}
@@ -25,7 +26,9 @@ class DocumentApiRepository {
 	 * @returns
 	 */
 	async getDocuments() {
-		return this.httpReq.get<any>(`/identity-verification/documents`);
+		return this.httpReq.get<IDocumentsApiResponse>(
+			`/identity-verification/documents`
+		);
 	}
 
 	/**

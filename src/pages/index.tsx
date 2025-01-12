@@ -1,16 +1,11 @@
 import DashboardLayout from '@/_app/components/layout/DashboardLayout';
-import { Geist, Geist_Mono } from 'next/font/google';
+import ProtectWithSession from '@/_app/protectors/ProtectWithSession';
+import { NextPage } from 'next';
 
-const geistSans = Geist({
-	variable: '--font-geist-sans',
-	subsets: ['latin'],
-});
+const DashboardPage: NextPage = () => {
+	return (
+		<DashboardLayout title='Dashboard analytics'>DashboardPage</DashboardLayout>
+	);
+};
 
-const geistMono = Geist_Mono({
-	variable: '--font-geist-mono',
-	subsets: ['latin'],
-});
-
-export default function Home() {
-	return <DashboardLayout>hello</DashboardLayout>;
-}
+export default ProtectWithSession(DashboardPage);

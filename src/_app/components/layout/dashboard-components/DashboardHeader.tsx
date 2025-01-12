@@ -69,6 +69,7 @@ const DashboardHeader: React.FC<Props> = ({ opened, setOpened }) => {
 
 						<Menu.Dropdown w={200}>
 							<Menu.Label>{user?.email}</Menu.Label>
+
 							<Menu.Item
 								color='red'
 								icon={<IconLogout />}
