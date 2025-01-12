@@ -49,7 +49,7 @@ const SigninPage: NextPage = () => {
 				_id: res?._id,
 			}),
 			{
-				expires: 15 / (24 * 60),
+				expires: 60 / (24 * 60),
 				sameSite: 'strict',
 			}
 		);

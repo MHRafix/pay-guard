@@ -2,14 +2,8 @@ import { useGetSession } from '@/_app/hooks/useGetSession';
 import { Avatar, Box, Burger, Group, Menu, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { openConfirmModal } from '@mantine/modals';
-import {
-	IconBooks,
-	IconLogout,
-	IconSun,
-	IconSunFilled,
-} from '@tabler/icons-react';
+import { IconLogout, IconSun, IconSunFilled } from '@tabler/icons-react';
 import Cookies from 'js-cookie';
-import Link from 'next/link';
 import Router from 'next/router';
 import React from 'react';
 
@@ -55,6 +49,7 @@ const DashboardHeader: React.FC<Props> = ({ opened, setOpened }) => {
 						<IconSun
 							className='cursor-pointer'
 							onClick={() => setMode('dark')}
+							color='#5d34d8'
 							size={30}
 						/>
 					)}
@@ -74,9 +69,6 @@ const DashboardHeader: React.FC<Props> = ({ opened, setOpened }) => {
 
 						<Menu.Dropdown w={200}>
 							<Menu.Label>{user?.email}</Menu.Label>
-							<Menu.Item color='violet' icon={<IconBooks />}>
-								<Link href={'/my-books'}>My Books</Link>
-							</Menu.Item>
 							<Menu.Item
 								color='red'
 								icon={<IconLogout />}

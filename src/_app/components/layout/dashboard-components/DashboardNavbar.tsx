@@ -5,10 +5,9 @@ import {
 	ScrollArea,
 	Space,
 	Text,
-	Title,
 } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { IconBook, IconX } from '@tabler/icons-react';
+import { IconTransactionDollar, IconX } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -40,16 +39,13 @@ const DashboardNavbar: React.FC<Props> = ({ opened, onOpened }) => {
 					<Image
 						src={'/assets/Logo/logo.png'}
 						alt='Logo'
-						width={100}
-						height={100}
-						className='!w-[100px] mx-auto !object-cover'
+						width={200}
+						height={200}
+						className='!w-[200px] mx-auto !object-cover'
 					/>
-					<Title order={2} fw={800} mt={15} color='violet'>
-						BookNest
-					</Title>
 				</div>
 			</Navbar.Section>
-			<Space h={30} />
+			<Space h={20} />
 			{opened && (
 				<div className='!flex justify-between w-full items-center p-3 ml-auto'>
 					<Text size={'xl'} fw={800}>
@@ -109,8 +105,8 @@ export default DashboardNavbar;
 
 export const menus = [
 	{
-		label: 'All Books',
-		icon: <IconBook size={20} />,
-		href: '/',
+		label: 'Payments',
+		icon: <IconTransactionDollar size={20} />,
+		href: '/payments',
 	},
 ];

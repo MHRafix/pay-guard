@@ -14,36 +14,35 @@ export default async function handler(
 
 	// payment logic
 	if (req.method === 'POST') {
-		try {
-			const payload = req.body;
-			// create a payment intent
-			const paymentIntent = await stripe.paymentIntents.create({
-				amount: 100000, // amount
-				currency: 'BDT', // bdt
-				payment_method_types: ['card'], // payment methods
-			});
+		// try {
+		const payload = req.body;
 
-			console.log(paymentIntent.client_secret);
+		// create a payment intent
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount: payload?.amount, // amount
+			currency: 'BDT', // bdt
+			payment_method_types: ['card'], // payment methods
+		});
 
-			if (!paymentIntent.client_secret) {
-				return res.status(400).json({
-					isSuccess: false,
-					message: 'Failed to create payment in stripe',
-				});
-			}
-
-			// create payment
-			const payment = await Payment.create(payload);
-
-			return res.status(200).json({
-				message: 'Payment request created successfully.',
-				data: { payment, paymentClientSecret: paymentIntent.client_secret },
-			});
-		} catch (err) {
-			res.status(500).json({
-				message: 'Failed to create payment.',
+		if (!paymentIntent.client_secret) {
+			return res.status(400).json({
+				isSuccess: false,
+				message: 'Failed to create payment in stripe',
 			});
 		}
+
+		// create payment
+		const payment = await Payment.create(payload);
+
+		return res.status(200).json({
+			message: 'Payment request created successfully.',
+			data: { payment, paymentClientSecret: paymentIntent.client_secret },
+		});
+		// } catch (err) {
+		// 	res.status(500).json({
+		// 		message: 'Failed to create payment.',
+		// 	});
+		// }
 	} else if (req.method === 'GET') {
 		try {
 			// find payments
@@ -82,6 +81,34 @@ export default async function handler(
 				message: 'Failed to get payments',
 			});
 		}
+	} else if (req.method === 'PATCH') {
+		try {
+			const { _id, status } = req.body;
+			// sendMail()
+			// find document
+			const document = await Payment.findOne({ _id });
+
+			// throw not found err
+			if (!document) {
+				return res.status(400).json({ message: 'No document found.' });
+			}
+
+			// verify document
+			await Payment.updateOne(
+				{ _id },
+				{ $set: { status } },
+				{ upsert: true, runValidators: true }
+			);
+
+			return res.status(200).json({
+				message: 'Identity verification success.',
+				isSuccess: true,
+			});
+		} catch (err) {
+			res.status(500).json({
+				message: 'Failed verify identity.',
+			});
+		}
 	} else {
 		// error response
 		res.status(404).json({
@@ -89,33 +116,3 @@ export default async function handler(
 		});
 	}
 }
-
-// else if (req.method === 'PATCH') {
-//   try {
-//     const { _id, status } = req.body;
-
-//     // find document
-//     const document = await Payment.findOne({ _id });
-
-//     // throw not found err
-//     if (!document) {
-//       return res.status(400).json({ message: 'No document found.' });
-//     }
-
-//     // verify document
-//     await Payment.updateOne(
-//       { _id },
-//       { $set: { status } },
-//       { upsert: true, runValidators: true }
-//     );
-
-//     return res.status(200).json({
-//       message: 'Identity verification success.',
-//       isSuccess: true,
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       message: 'Failed verify identity.',
-//     });
-//   }
-// }

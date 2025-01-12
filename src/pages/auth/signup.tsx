@@ -42,7 +42,6 @@ const SignUpPage: NextPage = () => {
 	});
 
 	// execute after success
-	// execute after success
 	const onSuccess = (res: { _id: string; token: string }) => {
 		Cookies.set(
 			'user',
@@ -51,7 +50,7 @@ const SignUpPage: NextPage = () => {
 				_id: res?._id,
 			}),
 			{
-				expires: 15 / (24 * 60),
+				expires: 60 / (24 * 60),
 				sameSite: 'strict',
 			}
 		);
@@ -61,6 +60,7 @@ const SignUpPage: NextPage = () => {
 			router?.push('/');
 		}
 	};
+
 	// signup mutation
 	const { mutate, isPending } = useMutation({
 		mutationKey: ['Signup_Mutation'],

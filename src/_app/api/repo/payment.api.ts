@@ -9,8 +9,9 @@ class PaymentApiRepository {
 	 * @param payload
 	 * @returns
 	 */
-	async(payload: any) {
-		return this.httpReq.post<any>(`/payments`, payload);
+	async payPayment(payload: any) {
+		const res = await this.httpReq.post<any>(`/payments`, payload);
+		return res.data;
 	}
 
 	/**
