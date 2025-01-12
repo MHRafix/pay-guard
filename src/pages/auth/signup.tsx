@@ -1,4 +1,4 @@
-import authenticationApiRepository from '@/_app/api/authentication.api';
+import authenticationApiRepository from '@/_app/api/repo/authentication.api';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -21,12 +21,16 @@ import {
 } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import Cookies from 'js-cookie';
 import { NextPage } from 'next';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 
 const SignUpPage: NextPage = () => {
+	const router = useRouter(); // router instance
+
 	// signup form
 	const {
 		handleSubmit,
@@ -37,12 +41,33 @@ const SignUpPage: NextPage = () => {
 		resolver: yupResolver(signup_Form_Validation_Schema),
 	});
 
+	// execute after success
+	// execute after success
+	const onSuccess = (res: { _id: string; token: string }) => {
+		Cookies.set(
+			'user',
+			JSON.stringify({
+				token: res?.token,
+				_id: res?._id,
+			}),
+			{
+				expires: 15 / (24 * 60),
+				sameSite: 'strict',
+			}
+		);
+		if (router?.query?.callback) {
+			router?.push(router?.query?.callback as string);
+		} else {
+			router?.push('/');
+		}
+	};
 	// signup mutation
 	const { mutate, isPending } = useMutation({
 		mutationKey: ['Signup_Mutation'],
 		mutationFn: (payload: ISignupPayload) =>
 			authenticationApiRepository.signup(payload),
 		onSuccess(res) {
+			onSuccess(res?.data);
 			showNotification({
 				title: 'Registration successful.',
 				color: 'teal',

@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import httpReq from './axios/http';
+import httpReq from '../axios-config/http';
 
 class PaymentApiRepository {
 	constructor(private httpReq: AxiosInstance) {}

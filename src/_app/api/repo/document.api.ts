@@ -1,6 +1,6 @@
 import { uploadDocument } from '@/lib/cloudinary/uploadDocument';
 import { AxiosInstance } from 'axios';
-import httpReq from './axios/http';
+import httpReq from '../axios-config/http';
 
 class DocumentApiRepository {
 	constructor(private httpReq: AxiosInstance) {}

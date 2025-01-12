@@ -1,6 +1,9 @@
 import { connectToDatabase } from '@/db/db-connection';
 import Payment from '@/db/schema/Payment.schema';
 import { NextApiRequest, NextApiResponse } from 'next';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string); // secret API key
 
 export default async function handler(
 	req: NextApiRequest,
@@ -13,13 +16,28 @@ export default async function handler(
 	if (req.method === 'POST') {
 		try {
 			const payload = req.body;
+			// create a payment intent
+			const paymentIntent = await stripe.paymentIntents.create({
+				amount: 100000, // amount
+				currency: 'BDT', // bdt
+				payment_method_types: ['card'], // payment methods
+			});
+
+			console.log(paymentIntent.client_secret);
+
+			if (!paymentIntent.client_secret) {
+				return res.status(400).json({
+					isSuccess: false,
+					message: 'Failed to create payment in stripe',
+				});
+			}
 
 			// create payment
 			const payment = await Payment.create(payload);
 
 			return res.status(200).json({
 				message: 'Payment request created successfully.',
-				data: payment,
+				data: { payment, paymentClientSecret: paymentIntent.client_secret },
 			});
 		} catch (err) {
 			res.status(500).json({
@@ -32,20 +50,20 @@ export default async function handler(
 			const payments = await Payment.aggregate([
 				{
 					$lookup: {
-						from: 'users', // name of the collection
-						localField: 'userId', // field in document
-						foreignField: '_id', // field in User
-						as: 'userId', // output array field
+						from: 'users',
+						localField: 'userId',
+						foreignField: '_id',
+						as: 'userId',
 					},
 				},
 				{ $unwind: '$userId' }, // flatten the array if each document has one author
 				{
 					$project: {
-						_id: 1, // Include the _id from FileDocument
-						document: 1, // Include other FileDocument fields
-						status: 1, // Include other FileDocument fields
-						'userId.name': 1, // Include specific fields from the joined collection
-						'userId.email': 1, // Include specific fields from the joined collection
+						_id: 1,
+						document: 1,
+						status: 1,
+						'userId.name': 1,
+						'userId.email': 1,
 					},
 				},
 			]);

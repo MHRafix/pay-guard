@@ -46,7 +46,7 @@ const PaymentForm: React.FC = () => {
 
 		try {
 			// Call your API to create a PaymentIntent
-			const res = await fetch('/api/create-payment-intent', {
+			const res = await fetch('/api/payments', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -62,6 +62,8 @@ const PaymentForm: React.FC = () => {
 				{
 					payment_method: {
 						card: cardNumberElement!,
+						payment_method: 'card',
+						billing_details: {},
 					},
 				}
 			);

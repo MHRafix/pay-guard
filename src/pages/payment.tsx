@@ -1,4 +1,4 @@
-import PaymentForm from '@/_app/components/StripePayment/PaymentForm';
+import PaymentForm from '@/_app/components/payment/PaymentForm';
 
 const PaymentPage: React.FC = () => {
 	return (

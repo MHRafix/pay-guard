@@ -66,9 +66,8 @@ export default async function handler(
 		// success response
 		res.status(200).json({
 			message: 'Signup successful.',
-			data: {
-				token: token,
-			},
+			token: token,
+			_id: user?._id,
 		});
 	} else {
 		// not found response

@@ -1,4 +1,4 @@
-import authenticationApiRepository from '@/_app/api/authentication.api';
+import authenticationApiRepository from '@/_app/api/repo/authentication.api';
 import { Text } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { showNotification } from '@mantine/notifications';
