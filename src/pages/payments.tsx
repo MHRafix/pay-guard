@@ -6,15 +6,30 @@ import ProtectWithSession from '@/_app/protectors/ProtectWithSession';
 import { IPayment } from '@/db/schema/Payment.schema';
 import DataTable from '@/lib/mantine-react-table/DataTable';
 import { getStatusBadgeColor } from '@/utils/getStatusBadgeColor';
-import { Badge, Menu } from '@mantine/core';
+import {
+	Badge,
+	Button,
+	Flex,
+	Menu,
+	Modal,
+	Paper,
+	Space,
+	Text,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconDownload, IconX } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { MRT_ColumnDef } from 'mantine-react-table';
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { usePDF } from 'react-to-pdf';
 
 const PaymentPage: React.FC = () => {
 	const { user } = useGetSession();
+
+	const [opened, modalHandler] = useDisclosure();
+	const [payment, setPayment] = useState<IPayment | null>(null);
+
 	// payments fetching
 	const { data, isPending, refetch, isRefetching } = useQuery({
 		queryKey: ['all-payments-fetched'],
@@ -22,6 +37,7 @@ const PaymentPage: React.FC = () => {
 		enabled: false,
 	});
 
+	// refetch payments
 	useEffect(() => {
 		refetch();
 	}, []);
@@ -139,9 +155,29 @@ const PaymentPage: React.FC = () => {
 				),
 				header: 'Status',
 			},
+			{
+				accessorKey: 'action',
+				accessorFn: (payment: IPayment) => (
+					<Button
+						disabled={payment?.status !== 'APPROVED'}
+						onClick={() => {
+							setPayment(payment);
+							modalHandler.open();
+						}}
+					>
+						Generate Invoice
+					</Button>
+				),
+				header: 'Action',
+			},
 		],
 		[]
 	);
+
+	// pdf invoice funcitonalities
+	const { toPDF, targetRef } = usePDF({
+		filename: `invoice-${payment?.title}.pdf`,
+	});
 
 	return (
 		<DashboardLayout title='Payments'>
@@ -156,6 +192,37 @@ const PaymentPage: React.FC = () => {
 			) : (
 				<PaymentForm />
 			)}
+
+			<Modal
+				title='Print Invoice'
+				opened={opened}
+				onClose={modalHandler.close}
+				withCloseButton={false}
+				centered
+			>
+				<div ref={targetRef}>
+					<Paper p={10} withBorder>
+						<Text size={'lg'}>Payment Details</Text>
+						<Text>Title: {payment?.title ?? 'N/A'}</Text>
+						<Text>Amount: {payment?.amount ?? 0.0} BDT</Text>
+						<Flex gap={5} align={'center'}>
+							Status:{' '}
+							<Badge color={getStatusBadgeColor(payment?.status!)}>
+								{payment?.status}
+							</Badge>
+						</Flex>
+						<Space h={'lg'} />
+						<Text size={'lg'}>User Details</Text>
+						<Text>Name: {payment?.userId?.name ?? 'N/A'}</Text>
+						<Text>Email: {payment?.userId?.email ?? 'N/A'}</Text>
+					</Paper>
+				</div>
+
+				<Space h={'md'} />
+				<Button onClick={() => toPDF()} leftIcon={<IconDownload />}>
+					Download PDF
+				</Button>
+			</Modal>
 		</DashboardLayout>
 	);
 };
