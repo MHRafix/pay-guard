@@ -1,6 +1,6 @@
 import paymentApiRepository from '@/_app/api/repo/payment.api';
 import DashboardLayout from '@/_app/components/layout/DashboardLayout';
-import ProtectWithSession from '@/_app/protectors/ProtectWithSession';
+import AdminProtectWithSession from '@/_app/protectors/AdminProtector';
 import {
 	Flex,
 	Paper,
@@ -72,4 +72,4 @@ const DashboardPage: NextPage = () => {
 	);
 };
 
-export default ProtectWithSession(DashboardPage);
+export default AdminProtectWithSession(DashboardPage);

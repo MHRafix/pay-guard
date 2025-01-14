@@ -1,3 +1,4 @@
+import { useGetSession } from '@/_app/hooks/useGetSession';
 import {
 	ActionIcon,
 	Navbar,
@@ -24,6 +25,7 @@ interface Props {
 }
 const DashboardNavbar: React.FC<Props> = ({ opened, onOpened }) => {
 	const { asPath } = useRouter();
+	const { user } = useGetSession();
 
 	// theme mode
 	const [mode = 'light', setMode] = useLocalStorage<any>({
@@ -66,7 +68,7 @@ const DashboardNavbar: React.FC<Props> = ({ opened, onOpened }) => {
 				</div>
 			)}
 			<Navbar.Section grow component={ScrollArea}>
-				{menus.map((item) => (
+				{getMenus(user?.role!)?.map((item) => (
 					<NavLink
 						style={{
 							fontFamily: 'Nunito sans, sans-serif',
@@ -112,12 +114,16 @@ const DashboardNavbar: React.FC<Props> = ({ opened, onOpened }) => {
 
 export default DashboardNavbar;
 
-export const menus = [
-	{
-		label: 'Dashboard',
-		icon: <IconDashboard size={20} />,
-		href: '/',
-	},
+const getMenus = (role: string) => {
+	switch (role) {
+		case 'USER':
+			return userMenus;
+		case 'ADMIN':
+			return adminMenus;
+	}
+};
+
+export const userMenus = [
 	{
 		label: 'Verify Identity',
 		icon: <IconUser size={20} />,
@@ -129,4 +135,13 @@ export const menus = [
 		icon: <IconTransactionDollar size={20} />,
 		href: '/payments',
 	},
+];
+
+export const adminMenus = [
+	{
+		label: 'Dashboard',
+		icon: <IconDashboard size={20} />,
+		href: '/',
+	},
+	...userMenus, // Spread the existing UserMenus to include them in adminMenus
 ];
