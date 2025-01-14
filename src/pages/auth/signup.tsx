@@ -182,7 +182,7 @@ export default SignUpPage;
 export const signup_Form_Validation_Schema = Yup.object().shape({
 	name: Yup.string().required().label('Name'),
 	email: Yup.string().email().required().label('Email'),
-	password: Yup.string().min(8).max(20).required().label('Password'),
+	password: Yup.string().min(4).max(20).required().label('Password'),
 });
 
 export interface ISigninPayload {
